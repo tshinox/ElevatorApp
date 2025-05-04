@@ -15,8 +15,8 @@ namespace Elevator.App.Models.MappingProfiles
         {
 
             CreateMap<List<spGetAvailableElevatorsResult>, List<GetAvailableElevatorsResult>>().ReverseMap();
-            CreateMap<List<spElevatorRequestResult>, List<GetAvailableElevatorsResult>>().ReverseMap();
-            CreateMap<List<spUpdateElevatorStateResult>, List<GetAvailableElevatorsResult>>().ReverseMap();
+            CreateMap<List<spElevatorRequestResult>, List<ElevatorRequestResult>>().ReverseMap();
+            CreateMap<List<spUpdateElevatorStateResult>, List<UpdateElevatorStateResult>>().ReverseMap();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Elevator.App.Models.DTOs.Requests;
+using Elevator.App.Models.DTOs.Results;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,6 @@ namespace ElevatorAppServices.Interfaces
 {
     public interface IProximityCheckService
     {
-        Task<string> GetClosestElevator(FloorRequest request);
+        Task<List<GetAvailableElevatorsResult>> GetClosestElevator(FloorRequest request);
     }
 }

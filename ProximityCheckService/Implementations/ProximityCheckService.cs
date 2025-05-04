@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Elevator.App.Models.DTOs.Requests;
+using Elevator.App.Models.DTOs.Results;
 using ElevatorAppData.Models;
 using ElevatorAppServices.Interfaces;
 using System;
@@ -21,9 +22,10 @@ namespace ElevatorAppServices.Implementations
             _context = context;
             _mapper = mapper;
         }
-        public async Task<string> GetClosestElevator(FloorRequest request)
+        public async Task<List<GetAvailableElevatorsResult>> GetClosestElevator(FloorRequest request)
         {
-            return "";
+            var result = await _context.GetProcedures().spGetAvailableElevatorsAsync(request.FloorNo, "Main");
+            return _mapper.Map<List<GetAvailableElevatorsResult>>(result);
         }
     }
 }

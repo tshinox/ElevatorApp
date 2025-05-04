@@ -1,6 +1,7 @@
 ﻿using Elevator.App.AppState;
 using Microsoft.Extensions.Configuration;
-
+using System.Net.Http;
+using System.Net.Http.Json;
 
 internal class Program
 {
@@ -11,36 +12,40 @@ internal class Program
             .SetBasePath("C://Users//mraliphaswa//source//repos//Elevator.App//Elevator.App")
             .AddJsonFile("elevatorconfiguration.json", optional: false, reloadOnChange: true);
         IConfiguration configuration = builder.Build();
-
+        HttpClient client = new HttpClient();
         var elevators = configuration.GetSection("Elevators").Get<List<string>>();
         var floors = configuration.GetSection("Floors").Get<List<List<int>>>();
         Console.WriteLine("Console API App is running.");
-
+        Console.WriteLine("Elevator name list:");
+        
+        foreach(var elevator in elevators)
+        {
+            Console.WriteLine(elevator);
+        }
+        
         while (true)
         {
-            Console.Write("Enter the floor.");
-            var input = Console.ReadLine()?.Trim();
+            Console.WriteLine("");
+            Console.Write("Enter the elevator.");
+            var elevator = Console.ReadLine()?.Trim();
 
-            switch (input?.ToLower())
+            Console.Write("Enter the floor.");
+            var floor = Console.ReadLine()?.Trim();
+
+            try
             {
-                case "status":
-                    Console.WriteLine($"Current status: {appState.Status}");
-                    break;
-                case "set":
-                    Console.Write("Enter new status: ");
-                    var newStatus = Console.ReadLine();
-                    appState.Status = newStatus ?? "";
-                    Console.WriteLine("Status updated.");
-                    break;
-                case "help":
-                    Console.WriteLine("Commands: status, set, quit");
-                    break;
-                case "quit":
-                    Console.WriteLine("Shutting down...");
-                    return;
-                default:
-                    Console.WriteLine("Unknown command. Type 'help' for available commands.");
-                    break;
+                if (floors[elevators.IndexOf(elevator)].Contains(Convert.ToInt32(floor)))
+                {
+
+                }
+                else
+                {
+                    Console.WriteLine("Floor doesn't exist for the selected elevator.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
         }
     }
