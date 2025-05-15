@@ -8,6 +8,7 @@ namespace Elevator.App.Models.DTOs.Results
 {
     public class GetAvailableElevatorsResult
     {
-        public string ElevatorName { get; set; }
+
+        public string? ElevatorName { get; set; }
     }
 }

@@ -1,47 +1,36 @@
-﻿using Elevator.App.AppState;
+﻿using Azure;
+using Elevator.App.AppState;
+using Elevator.App.Models.DTOs.Requests;
+using Elevator.App.Models.DTOs.Results;
 using Microsoft.Extensions.Configuration;
-using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text;
+using System.Text.Json;
 
-internal class Program
+public class Program
 {
     private static void Main(string[] args)
     {
         var appState = new AppState();
-        var builder = new ConfigurationBuilder()
-            .SetBasePath("C://Users//mraliphaswa//source//repos//Elevator.App//Elevator.App")
-            .AddJsonFile("elevatorconfiguration.json", optional: false, reloadOnChange: true);
-        IConfiguration configuration = builder.Build();
         HttpClient client = new HttpClient();
-        var elevators = configuration.GetSection("Elevators").Get<List<string>>();
-        var floors = configuration.GetSection("Floors").Get<List<List<int>>>();
-        Console.WriteLine("Console API App is running.");
-        Console.WriteLine("Elevator name list:");
-        
-        foreach(var elevator in elevators)
-        {
-            Console.WriteLine(elevator);
-        }
+        Console.WriteLine("Elevator App is running.");
         
         while (true)
         {
-            Console.WriteLine("");
-            Console.Write("Enter the elevator.");
-            var elevator = Console.ReadLine()?.Trim();
-
+            Console.Write("Enter the Building.");
+            var building = Console.ReadLine()?.Trim();
+            Console.Write("Enter the Elevator Name.");
+            var elevatorName = Console.ReadLine()?.Trim();
             Console.Write("Enter the floor.");
             var floor = Console.ReadLine()?.Trim();
+            Console.Write("Enter the .");
+            var passengers = Console.ReadLine()?.Trim();
+            Console.Write("Enter the floor.");
+            var Weight = Console.ReadLine()?.Trim();
 
             try
             {
-                if (floors[elevators.IndexOf(elevator)].Contains(Convert.ToInt32(floor)))
-                {
 
-                }
-                else
-                {
-                    Console.WriteLine("Floor doesn't exist for the selected elevator.");
-                }
             }
             catch (Exception ex)
             {
@@ -49,5 +38,61 @@ internal class Program
             }
         }
     }
+    public async Task<GetAvailableElevatorsResult> GetElevator(HttpClient client, int floorNo)
+    {
+        var response = await client.PostAsJsonAsync($"https://localhost:7029/api/Location/CallElevator?FloorNo={floorNo}",
+                    new StringContent("", Encoding.UTF8, "application/json"));
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var result = JsonSerializer.Deserialize<GetAvailableElevatorsResult>(responseContent, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        });
+        return result;
+    }
+    public async Task<GetAvailableElevatorsResult> CheckPassengerLimit(HttpClient client, DestinationRequest request)
+    {
+        var json = JsonSerializer.Serialize(request);
+        var response = await client.PostAsJsonAsync("https://localhost:7150/api/Limit/CheckPassengerLimit",
+                    new StringContent(json, Encoding.UTF8, "application/json"));
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var result = JsonSerializer.Deserialize<GetAvailableElevatorsResult>(responseContent, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        });
+        return result;
+    }
+    public async Task<GetAvailableElevatorsResult> CheckWeightLimit(HttpClient client, DestinationRequest request)
+    {
+        var json = JsonSerializer.Serialize(request);
+        var response = await client.PostAsJsonAsync("https://localhost:7150/api/Limit/CheckWeightLimit",
+                    new StringContent(json, Encoding.UTF8, "application/json"));
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var result = JsonSerializer.Deserialize<GetAvailableElevatorsResult>(responseContent, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        });
+        return result;
+    }
+    public async Task<GetAvailableElevatorsResult> GetElevatorStatus(HttpClient client, string elevatorName)
+    {
+        var response = await client.PostAsJsonAsync($"https://localhost:7053/api/Elevator/GetElevatorStatus?ElevatorName={elevatorName}",
+                    new StringContent("", Encoding.UTF8, "application/json"));
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var result = JsonSerializer.Deserialize<GetAvailableElevatorsResult>(responseContent, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        });
+        return result;
+    }
+    public async Task<GetAvailableElevatorsResult> GetElevatorDestination(HttpClient client, string elevatorName)
+    {
+        var response = await client.PostAsJsonAsync($"https://localhost:7053/api/Elevator/GetDestination?ElevatorName={elevatorName}",
+                    new StringContent("", Encoding.UTF8, "application/json"));
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var result = JsonSerializer.Deserialize<GetAvailableElevatorsResult>(responseContent, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        });
+        return result;
+    }
 }
-

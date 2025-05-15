@@ -24,7 +24,7 @@ namespace ElevatorAppServices.Implementations
         }
         public async Task<List<GetAvailableElevatorsResult>> GetClosestElevator(FloorRequest request)
         {
-            var result = await _context.GetProcedures().spGetAvailableElevatorsAsync(request.FloorNo, "Main");
+            var result = await _context.GetProcedures().spGetAvailableElevatorsAsync(request.FloorNo, request.BuildingName);
             return _mapper.Map<List<GetAvailableElevatorsResult>>(result);
         }
     }
